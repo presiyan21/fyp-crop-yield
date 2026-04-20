@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://fyp-crop-yield-api.onrender.com/api/:path*" }
+  ]
+}
