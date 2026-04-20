@@ -1,4 +1,9 @@
 # CropAdvisor
+**Live demo:** https://fyp-crop-yield.vercel.app
+
+Sign in with the test account below and the Dashboard loads on first page. The hosted version is the intended way to mark this submission — no install required.
+
+Heads up on the first request: the backend sits on Render's free tier, which puts idle instances to sleep. The first call after a quiet period wakes it back up and can take 30–50 seconds to respond. Everything after that is fast.
 
 A district-level crop yield advisory system for Indian agriculture. Farmers or agronomists enter their field conditions — irrigation ratio, fertiliser application, and current climate — and the system predicts expected yield, classifies it against the district's historical benchmarks, and generates a set of concrete management actions.
 
@@ -24,7 +29,7 @@ The backend runs ten XGBoost models (one per crop), trained on ICRISAT district 
 
 ---
 
-## Setup
+## Running the system locally
 
 ### Prerequisites
 
@@ -101,7 +106,7 @@ An admin demo account is available with pre-seeded data covering all major featu
 | Field | Value |
 |---|---|
 | Email | `goldsmiths.test.user@gmail.com` |
-| Password | *(provided separately)* |
+| Password | `goldsmiths` |
 | Role | Admin |
 
 This account has 64 seeded recommendations, 60 yield reports, active crop threshold overrides, and 9 pending notifications.
@@ -165,3 +170,14 @@ Row-level security should be configured so users can only read and write their o
 - **Pulse crop accuracy is lower.** Chickpea, pigeonpea, pearl millet, sorghum, and cotton models have R² between 0.42 and 0.48. The UI shows confidence tier badges on every advisory to make this transparent.
 - **No live price data.** Economic impact calculations use 2024–25 Government of India Minimum Support Prices, which are hardcoded and not fetched dynamically.
 - **Optimistic classification bias.** The model predicts above-median yields more often than not on the demo dataset. The confusion matrix in the Admin panel detects and flags this automatically.
+
+---
+
+## Submission
+
+> **Submission tag:** `v1.0-submission`
+> ```
+> git clone https://github.com/presiyan21/fyp-crop-yield.git
+> cd fyp-crop-yield
+> git checkout v1.0-submission
+> ```
