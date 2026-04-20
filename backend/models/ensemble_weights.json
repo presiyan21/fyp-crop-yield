@@ -1,0 +1,52 @@
+{
+  "rice": {
+    "w_rf": 0.6,
+    "w_xgb": 0.4,
+    "w_lgbm": -0.0
+  },
+  "wheat": {
+    "w_rf": 0.2,
+    "w_xgb": 0.0,
+    "w_lgbm": 0.8
+  },
+  "maize": {
+    "w_rf": 0.0,
+    "w_xgb": 0.7,
+    "w_lgbm": 0.3
+  },
+  "sorghum": {
+    "w_rf": 0.0,
+    "w_xgb": 0.0,
+    "w_lgbm": 1.0
+  },
+  "pearl_millet": {
+    "w_rf": 1.0,
+    "w_xgb": 0.0,
+    "w_lgbm": 0.0
+  },
+  "chickpea": {
+    "w_rf": 0.2,
+    "w_xgb": 0.4,
+    "w_lgbm": 0.4
+  },
+  "pigeonpea": {
+    "w_rf": 0.3,
+    "w_xgb": 0.0,
+    "w_lgbm": 0.7
+  },
+  "groundnut": {
+    "w_rf": 1.0,
+    "w_xgb": 0.0,
+    "w_lgbm": 0.0
+  },
+  "cotton": {
+    "w_rf": 0.0,
+    "w_xgb": 0.8,
+    "w_lgbm": 0.2
+  },
+  "sugarcane": {
+    "w_rf": 0.0,
+    "w_xgb": 0.0,
+    "w_lgbm": 1.0
+  }
+}

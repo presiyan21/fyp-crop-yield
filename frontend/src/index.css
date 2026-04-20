@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@media print {
+  nav, .no-print { display: none !important; }
+  body { background: white !important; }
+  .space-y-3 > * { break-inside: avoid; }
+}
