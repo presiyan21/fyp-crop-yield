@@ -1,6 +1,6 @@
 """
-seed_demo.py  —  Populate CropAdvisor with realistic demo data.
-Run from backend/ directory. Flask does NOT need to be running.
+Populate the demo database: recommendations, yield reports, and user thresholds.
+Run from backend/; no Flask server required.
 """
 import os, json, uuid, random
 import pandas as pd
@@ -115,7 +115,6 @@ for crop_idx, crop in enumerate(SUPPORTED_CROPS):
         actual_yield = round(median * actual_m, 1)
         stagger      = crop_idx          # slightly stagger per-crop so weekly chart is spread
 
-        # Insert recommendation
         rec = {
             "user_id":            ADMIN_UID,
             "crop":               crop,
@@ -139,14 +138,13 @@ for crop_idx, crop in enumerate(SUPPORTED_CROPS):
             print(f"  WARN rec insert [{sc_name}]: {e}")
             continue
 
-        # Insert yield report (reported ~4 weeks after advisory)
         yr = {
             "recommendation_id": rec_id,
             "user_id":           ADMIN_UID,
             "actual_yield":      actual_yield,
             "crop":              crop,
             "dist_code":         dist_code,
-            "reported_at":       ts(max(3, days_ago + stagger - 28)),
+            "reported_at":       ts(max(3, days_ago + stagger - 28)),  # ~28 days after advisory
         }
         try:
             supabase.table("yield_reports").insert(yr).execute()
@@ -159,7 +157,6 @@ for crop_idx, crop in enumerate(SUPPORTED_CROPS):
         except Exception as e:
             print(f"  WARN yield insert [{sc_name}]: {e}")
 
-# Seed user_thresholds with crop overrides so Settings page is populated
 print("\nSeeding user thresholds with crop overrides...")
 try:
     supabase.table("user_thresholds").upsert({
