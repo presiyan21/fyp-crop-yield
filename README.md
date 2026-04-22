@@ -81,6 +81,55 @@ This account has 64 seeded recommendations, 60 yield reports, active crop thresh
 
 ---
 
+## Walkthrough
+
+Use the admin account above. The steps below cover all the main features in a logical order — the whole thing takes about 10 minutes.
+
+### 1. Get an advisory
+
+1. Log in and you land on the Dashboard.
+2. Select **Rice** from the crop dropdown.
+3. Select **Lucknow** from the district dropdown (type it to filter).
+4. Click **Load weather data** — the six climate fields fill automatically from the Open-Meteo archive. You will see a small comparison note next to each value showing how current conditions compare to the training baseline.
+5. Click **Get Advisory**.
+
+The advisory card loads with a traffic-light classification, predicted yield against the district median, a SHAP bar chart showing which inputs drove the prediction, a confidence interval band, and a set of management actions. The classification is Green / Amber / Red based on where the predicted yield falls in the district's historical quartile distribution.
+
+If any input falls more than 2.5 standard deviations outside the training distribution, an out-of-distribution warning appears above the actions.
+
+### 2. Compare two scenarios
+
+1. With the Rice advisory still showing, click **Save as Scenario A**.
+2. Change the **Irrigation ratio** field to `0.2`.
+3. Click **Get Advisory** again.
+4. Click **Compare with Scenario A**.
+
+The comparison panel shows both predictions side by side, the yield delta, whether the confidence intervals overlap, and which changed inputs appear in the SHAP top 10 for either scenario.
+
+### 3. Check history
+
+Go to **History** in the navigation. The table shows all 64 seeded recommendations. Expand any row to see the full input set, applied thresholds, and — where a yield report exists — the actual vs predicted yield and classification accuracy verdict.
+
+The two rows without a yield report show an **Accept** button and a harvest nudge, which is how real users would submit their actual outcome after harvest.
+
+### 4. Admin panel
+
+Go to **Admin** (visible because the account has the admin role).
+
+- **Confusion matrix** — shows predicted vs actual classification across all 60 reported recommendations. An optimistic bias banner appears automatically if the model issued no Red advisories but actual Red outcomes exist in the data.
+- **CUSUM charts** — one per crop, tracking cumulative prediction error over time. A red marker appears at the point where drift was first detected.
+- **Retraining pipeline** — click **Simulate** on any crop to step through the five-stage readiness check.
+
+### 5. Threshold settings
+
+Go to **Settings**. The global thresholds are pre-populated. Scroll to **Per-crop overrides**, toggle on **Rice**, and you will see the five-field override grid with the seeded values. Change a value and click **Save** — the change persists and the next advisory for that crop will use the updated thresholds, which are stored in `applied_thresholds` on the recommendation row.
+
+### 6. Notifications
+
+Click the bell icon in the top navigation. Two harvest-due alerts and several planting-window alerts are listed. Clicking a harvest alert links directly to the relevant History row.
+
+---
+
 ## Running the tests
 
 ### Backend
