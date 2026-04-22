@@ -1,11 +1,11 @@
 # CropAdvisor
 **Live demo:** https://fyp-crop-yield.vercel.app
 
-Sign in with the test account below and the Dashboard loads on first page. The hosted version is the intended way to mark this submission — no install required.
+Sign in with the test account below, no install required.
 
-Heads up on the first request: the backend sits on Render's free tier, which puts idle instances to sleep. The first call after a quiet period wakes it back up and can take 30–50 seconds to respond. Everything after that is fast.
+The backend runs on Render's free tier, which sleeps after 15 minutes idle. The first request after a quiet period takes 30–50 seconds to wake up. Everything after that is fast.
 
-A district-level crop yield advisory system for Indian agriculture. Farmers or agronomists enter their field conditions — irrigation ratio, fertiliser application, and current climate — and the system predicts expected yield, classifies it against the district's historical benchmarks, and generates a set of concrete management actions.
+CropAdvisor is a decision-support tool for crop yield advisory. Users enter field conditions — irrigation, fertiliser application, and seasonal climate — and the system predicts expected yield, classifies it against district-level historical benchmarks, and returns a prioritised set of management actions. The underlying models are trained on the ICRISAT district dataset (India, 1966–2005), which provides the depth of historical yield records needed to build and evaluate a meaningful ML pipeline.
 
 The backend runs ten XGBoost models (one per crop), trained on ICRISAT district data from 1966–2005 and tested on 2006–2015. Predictions come with SHAP-based explanations, conformal confidence intervals, and a full drift monitoring pipeline for tracking model accuracy over time.
 
@@ -31,33 +31,24 @@ The backend runs ten XGBoost models (one per crop), trained on ICRISAT district 
 
 ## Running the system locally
 
+The backend and frontend both connect to the hosted Supabase project used by the live demo. No database setup or data seeding is needed — the credentials in `.env.example` point to the existing project with all demo data already loaded.
+
 ### Prerequisites
 
 - Python 3.11+
 - Node.js 20+
-- A [Supabase](https://supabase.com) project with the schema described below
 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com//fyp-crop-yield.git
+git clone https://github.com/presiyan21/fyp-crop-yield.git
 cd fyp-crop-yield
 ```
 
-### 2. Backend environment
-
-Create `backend/.env`:
-
-```
-SUPABASE_URL=https://<project-ref>.supabase.co
-SUPABASE_KEY=<service-role-key>
-```
-
-A template is provided at `backend/.env.example`.
-
-Install dependencies and start the server:
+### 2. Backend
 
 ```bash
+cp backend/.env.example backend/.env
 cd backend
 pip install -r requirements.txt
 python app.py
@@ -65,20 +56,10 @@ python app.py
 
 The API runs on `http://localhost:5000`.
 
-### 3. Frontend environment
-
-Create `frontend/.env`:
-
-```
-VITE_SUPABASE_URL=https://<project-ref>.supabase.co
-VITE_SUPABASE_ANON_KEY=<anon-key>
-```
-
-A template is provided at `frontend/.env.example`.
-
-Install dependencies and start the dev server:
+### 3. Frontend
 
 ```bash
+cp frontend/.env.example frontend/.env
 cd frontend
 npm install
 npm run dev
@@ -86,22 +67,9 @@ npm run dev
 
 The app runs on `http://localhost:5173`. All `/api/*` requests proxy automatically to port 5000 — no CORS configuration needed in development.
 
-### 4. Seed demo data 
-
-To populate the demo account with pre-built advisory scenarios:
-
-```bash
-cd backend
-python seed_demo.py
-```
-
-This inserts 60 recommendation and yield report pairs across all ten crops, plus custom threshold settings with three crop-level overrides.
-
 ---
 
 ## Test credentials
-
-An admin demo account is available with pre-seeded data covering all major features:
 
 | Field | Value |
 |---|---|
@@ -147,19 +115,6 @@ To run with coverage:
 ```bash
 npm run test:coverage
 ```
-
----
-
-## Database schema
-
-Four tables are required in Supabase:
-
-- **`recommendations`** — stores advisory outputs, user inputs, predicted yield, classification level, and applied thresholds
-- **`yield_reports`** — records actual harvest yield against a recommendation, used for drift monitoring
-- **`user_thresholds`** — per-user advisory threshold configuration with per-crop overrides stored as JSONB
-- **`profiles`** — user roles (`admin` or null), linked to Supabase auth
-
-Row-level security should be configured so users can only read and write their own rows. The `profiles` table requires a trigger to insert a default row on new user sign-up.
 
 ---
 
