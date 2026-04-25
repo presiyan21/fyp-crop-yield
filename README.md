@@ -22,6 +22,7 @@ The backend runs ten XGBoost models (one per crop), trained on ICRISAT district 
 - **Sensitivity analysis** — Shows yield response to ±30% variation in each user-controllable field
 - **Multi-year projection** — Three-season chained yield forecast with trajectory classification
 - **Crop ranker** — Runs all ten models in parallel and ranks crops by risk-adjusted expected revenue; includes six climate stress scenario presets
+- **Climate scenario planner** — Apply a climate stress preset (drought, heat wave, excess rain, and others) and see how each crop's predicted yield and ranking shifts relative to the baseline
 - **History and yield reporting** — Users can accept advisories and later submit actual harvest yields; the system tracks prediction error and classification accuracy
 - **Admin panel** — Confusion matrix, CUSUM control charts, ADF stationarity tests, per-crop MAE trends, and a retraining readiness pipeline (admin accounts only)
 - **Threshold customisation** — Per-user and per-crop advisory thresholds with agronomic defaults pre-populated
@@ -112,7 +113,16 @@ Go to **History** in the navigation. The table shows all 64 seeded recommendatio
 
 The two rows without a yield report show an **Accept** button and a harvest nudge, which is how real users would submit their actual outcome after harvest.
 
-### 4. Admin panel
+### 4. Explore climate scenarios
+
+Go to **Crop Ranker** in the navigation.
+
+1. Select a district — the climate fields auto-fill from Open-Meteo archive data.
+2. Click a preset, for example **Drought**, and the ranking table updates immediately showing yield change and rank shift per crop.
+3. To adjust individual weather values, use the sliders that appear below the preset buttons.
+4. Switch to **Custom Scenario** to set your own conditions from scratch.
+
+### 5. Admin panel
 
 Go to **Admin** (visible because the account has the admin role).
 
@@ -120,11 +130,11 @@ Go to **Admin** (visible because the account has the admin role).
 - **CUSUM charts** — one per crop, tracking cumulative prediction error over time. A red marker appears at the point where drift was first detected.
 - **Retraining pipeline** — click **Simulate** on any crop to step through the five-stage readiness check.
 
-### 5. Threshold settings
+### 6. Threshold settings
 
 Go to **Settings**. The global thresholds are pre-populated. Scroll to **Per-crop overrides**, toggle on **Rice**, and you will see the five-field override grid with the seeded values. Change a value and click **Save** — the change persists and the next advisory for that crop will use the updated thresholds, which are stored in `applied_thresholds` on the recommendation row.
 
-### 6. Notifications
+### 7. Notifications
 
 Click the bell icon in the top navigation. Two harvest-due alerts and several planting-window alerts are listed. Clicking a harvest alert links directly to the relevant History row.
 

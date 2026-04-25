@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { fetchHistory, reportYield } from "../lib/api";
+import { fetchHistory, reportYield, deleteRecommendation } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
-import { CheckCircle, AlertCircle, AlertTriangle, Download, Loader2, ChevronDown, MapPin, ArrowRight } from "lucide-react";
+import { CheckCircle, AlertCircle, AlertTriangle, Download, Loader2, ChevronDown, MapPin, ArrowRight, Trash2 } from "lucide-react";
 import YieldTrendChart from "../components/YieldTrendChart";
 import { generateAdvisoryPDF } from "../lib/pdfReport";
 import {
@@ -342,7 +342,13 @@ export default function History() {
         </div>
       ) : (
         <div className="space-y-2">
-          {filtered.map((rec) => <HistoryRow key={rec.id} rec={rec} />)}
+          {filtered.map((rec) => (
+            <HistoryRow
+              key={rec.id}
+              rec={rec}
+              onDeleted={(id) => setRecords((prev) => prev.filter((r) => r.id !== id))}
+            />
+          ))}
         </div>
       )}
     </div>
@@ -640,14 +646,27 @@ function HarvestFeedbackCard({ rec, actualYield, actualLevel, verdict, vs, gener
   );
 }
 
-function HistoryRow({ rec }) {
+function HistoryRow({ rec, onDeleted }) {
   const [open, setOpen]               = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting]           = useState(false);
   const [reportOpen, setReportOpen]   = useState(false);
   const [reportValue, setReportValue] = useState("");
   const [reporting, setReporting]     = useState(false);
   const [reportResult, setReportResult] = useState(null);
   const [reportError, setReportError]   = useState(null);
   const [generatingPDF, setGeneratingPDF] = useState(false);
+
+  async function handleDelete() {
+    setDeleting(true);
+    try {
+      await deleteRecommendation(rec.id);
+      onDeleted(rec.id);
+    } catch {
+      setDeleting(false);
+      setConfirmDelete(false);
+    }
+  }
 
   const Icon  = LEVEL_ICON[rec.level]  || AlertCircle;
   const color = LEVEL_COLOR[rec.level] || "text-amber-500";
@@ -710,8 +729,9 @@ function HistoryRow({ rec }) {
   return (
     <div className="bg-white border rounded-xl overflow-hidden">
       {/* Always-visible header */}
-      <button onClick={() => setOpen(v => !v)}
-        className="w-full flex items-center gap-4 px-4 pt-4 pb-2 text-left hover:bg-slate-50 transition">
+      <div onClick={() => setOpen(v => !v)} role="button" tabIndex={0}
+        onKeyDown={(e) => e.key === "Enter" && setOpen(v => !v)}
+        className="w-full flex items-center gap-4 px-4 pt-4 pb-2 cursor-pointer hover:bg-slate-50 transition">
         <Icon size={18} className={`${color} shrink-0`} />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
@@ -757,8 +777,36 @@ function HistoryRow({ rec }) {
             )}
           </div>
         </div>
-        <ChevronDown size={16} className={`text-slate-400 transition-transform shrink-0 ${open ? "rotate-180" : ""}`} />
-      </button>
+        <div className="flex items-center gap-1.5 shrink-0">
+          {confirmDelete ? (
+            <>
+              <span className="text-xs text-slate-500">Delete?</span>
+              <button
+                onClick={(e) => { e.stopPropagation(); handleDelete(); }}
+                disabled={deleting}
+                className="text-xs px-2 py-1 rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+              >
+                {deleting ? "Deleting…" : "Yes"}
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); setConfirmDelete(false); }}
+                className="text-xs px-2 py-1 rounded border border-slate-200 text-slate-500 hover:bg-slate-100"
+              >
+                No
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={(e) => { e.stopPropagation(); setConfirmDelete(true); }}
+              className="p-1.5 rounded text-slate-300 hover:text-red-500 hover:bg-red-50 transition"
+              title="Delete prediction"
+            >
+              <Trash2 size={14} />
+            </button>
+          )}
+          <ChevronDown size={16} className={`text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} />
+        </div>
+      </div>
 
       {!open && (
         <>

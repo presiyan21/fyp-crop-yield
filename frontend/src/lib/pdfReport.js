@@ -119,7 +119,7 @@ function buildReportHTML(advisory) {
   <div class="pdf-section"><div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:12px;border-bottom:2.5px solid #e2e8f0;margin-bottom:14px;">
     <div>
       <div style="font-size:24px;font-weight:800;color:#1e293b;letter-spacing:-0.5px;">&#127807; CropAdvisor</div>
-      <div style="font-size:12px;color:#64748b;margin-top:3px;">AI-Powered Crop Yield Advisory Report</div>
+      <div style="font-size:12px;color:#64748b;margin-top:3px;">Crop Yield Advisory Report</div>
     </div>
     <div style="text-align:right;">
       <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;">Generated</div>

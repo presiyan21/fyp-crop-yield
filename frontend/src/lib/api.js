@@ -36,6 +36,7 @@ export async function reportYield(recId, actualYield) {
 export const acceptRecommendation = (id) => api.patch(`/recommendations/${id}/accept`).then(r => r.data);
 
 export const fetchHistory = () => api.get("/history").then(r => r.data);
+export const deleteRecommendation = (id) => api.delete(`/history/${id}`).then(r => r.data);
 
 export const fetchSettings  = ()             => api.get("/settings").then(r => r.data);
 export const updateSettings = (thresholds)   => api.put("/settings", thresholds).then(r => r.data);

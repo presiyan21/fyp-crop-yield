@@ -64,3 +64,23 @@ def get_history():
         return jsonify({"recommendations": recs, "is_admin": is_admin})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@history_bp.route("/api/history/<rec_id>", methods=["DELETE"])
+@require_auth
+def delete_recommendation(rec_id):
+    try:
+        sb = get_supabase()
+        check = (
+            sb.table("recommendations")
+            .select("id")
+            .eq("id", rec_id)
+            .eq("user_id", g.user_id)
+            .execute()
+        )
+        if not check.data:
+            return jsonify({"error": "Not found"}), 404
+        sb.table("yield_reports").delete().eq("recommendation_id", rec_id).execute()
+        sb.table("recommendations").delete().eq("id", rec_id).execute()
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
